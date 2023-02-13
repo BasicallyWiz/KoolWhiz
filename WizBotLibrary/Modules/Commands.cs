@@ -35,7 +35,8 @@ namespace WizBotLibrary.Modules
     //  Register commands
     public void RegisterCommands()
     {
-      
+      CurrentBot.client.BulkOverwriteGlobalApplicationCommandsAsync(null);
+      CurrentBot.client.Rest.GetGuildAsync(603162720199639061).Result.BulkOverwriteApplicationCommandsAsync(null);
 
       Commands = RegisterCommandsFromFiles();
       RegisterCommandsToDiscord();
@@ -62,7 +63,7 @@ namespace WizBotLibrary.Modules
         {
           //TODO: Add support for command groups and subcommands
           var guild = CurrentBot.client.Rest.GetGuildAsync(603162720199639061).Result;
-
+          command.Builder.Description += " (DEBUG)";
           guild.CreateApplicationCommandAsync(command.Builder.Build());
         }
       }
@@ -74,6 +75,7 @@ namespace WizBotLibrary.Modules
           var guild = CurrentBot.client.Rest.GetGuildAsync(603162720199639061).Result;
 
           var Slash = new SlashCommandBuilder();
+
 
           CurrentBot.client.CreateGlobalApplicationCommandAsync(command.Builder.Build());
         }

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using WizBotLibrary.Commands.Structs;
@@ -25,6 +26,7 @@ namespace WizBotLibrary.Modules
 
     public async Task Execute(SocketSlashCommand inputCommand, WizBot Bot)
     {
+      if (!File.Exists($"{Directory.GetCurrentDirectory()}\\gogs\\gogs.txt")) { await inputCommand.RespondAsync("Looks like we have no gogs cached. A developer needs to do /archivegogs to cache the gogs."); return; }
       IEnumerable<string> Strings = File.ReadAllLines($"{Directory.GetCurrentDirectory()}\\gogs\\gogs.txt");
       
       Random random = new Random();
@@ -35,6 +37,9 @@ namespace WizBotLibrary.Modules
       embedBuilder.Color = Color.DarkPurple;
       embedBuilder.Footer = new EmbedFooterBuilder();
       embedBuilder.Footer.Text = $"Loading gogs may take some time...";
+
+      WebClient client = new WebClient();
+      
 
       await inputCommand.RespondAsync(embed: embedBuilder.Build());
     }

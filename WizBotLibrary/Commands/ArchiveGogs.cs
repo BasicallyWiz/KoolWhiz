@@ -31,6 +31,7 @@ namespace WizBotLibrary.Commands
 
     public async Task Execute(SocketSlashCommand inputCommand, WizBot Bot)
     {
+      if (!inputCommand.User.IsDeveloper(Bot)) { await inputCommand.RespondAsync("Since you are not a dev, you cannot use this command."); return; }
       await inputCommand.DeferAsync();
 
       IMessageChannel SourceChannel;
@@ -41,6 +42,7 @@ namespace WizBotLibrary.Commands
         SourceChannel = Bot.client.GetChannel(831612912266641408) as IMessageChannel;
       }
 
+      if (SourceChannel == null) { await inputCommand.FollowupAsync("We can't reach the channel that's meant to be archived."); return; }
       List<string> UrlList = new List<string>();
       
       //  Executes regardless of debug or release
@@ -54,6 +56,7 @@ namespace WizBotLibrary.Commands
       });
 
       File.WriteAllLines($"{Directory.GetCurrentDirectory()}\\gogs\\gogs.txt", UrlList.ToArray());
+      await inputCommand.FollowupAsync("Finished caching urls");
     }
   }
 }

@@ -48,8 +48,8 @@ namespace WizBotLibrary
         //  Register required client events
         client.Ready += DiscordClientReady;
 
-
         await client.LoginAsync(TokenType.Bot, File.ReadAllText("token.txt"));
+        
         await client.StartAsync();
 
       } catch(Exception ex) {
