@@ -17,7 +17,7 @@ namespace WizBotLibrary.Commands
 
     public async Task Execute(SocketMessage message, WizBot Bot)
     {
-      if (message.Channel.Id != 831973302972055615 && message.Author.Id != 962874982663331870) return;
+      if (message.Channel.Id != 831973302972055615) return;
 
       if (message.Content == "Immediately. <:gogSerious:831917700850384896>") {
         Emote responseEmote;
