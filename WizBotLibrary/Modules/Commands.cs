@@ -8,7 +8,7 @@ using Discord;
 using Discord.Commands.Builders;
 using Discord.WebSocket;
 
-using WizBotLibrary.Commands.Structs;
+using WizBotLibrary.Commands.Interfaces;
 namespace WizBotLibrary.Modules
 {
   public class CommandSystem

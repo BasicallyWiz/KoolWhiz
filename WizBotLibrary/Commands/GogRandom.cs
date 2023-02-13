@@ -9,7 +9,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using WizBotLibrary.Commands.Structs;
+using WizBotLibrary.Commands.Interfaces;
 
 namespace WizBotLibrary.Modules
 {

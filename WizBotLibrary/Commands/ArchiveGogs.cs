@@ -7,7 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WizBotLibrary.Commands.Structs;
+using WizBotLibrary.Commands.Interfaces;
 using System.Net;
 using Discord.Rest;
 using WizBotLibrary.Modules.DiscordNetExtensions;

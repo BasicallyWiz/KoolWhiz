@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 
-namespace WizBotLibrary.Commands.Structs
+namespace WizBotLibrary.Commands.Interfaces
 {
   public interface ISlashCommand : ICommand
   {
