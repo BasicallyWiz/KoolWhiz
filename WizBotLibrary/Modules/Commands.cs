@@ -15,11 +15,13 @@ namespace WizBotLibrary.Modules
   {
     public SlashCommands SlashSystem;
     public RecursiveCommands RecursiveSystem;
+    public TextCommands TextSystem;
 
     public CommandSystem(WizBot Bot)
     {
       SlashSystem = new SlashCommands(Bot);
       RecursiveSystem = new RecursiveCommands(Bot);
+      TextSystem = new TextCommands(Bot);
     }
   }
   public class SlashCommands
@@ -98,7 +100,8 @@ namespace WizBotLibrary.Modules
   }
 
   //  Not executed by a user, but by a specific point in time.
-  public class RecursiveCommands {
+  public class RecursiveCommands
+  {
     /// X Find recurcive commands
     /// Start command ticking, and subscribe to events
     /// When event fires, execute method on recursive command
@@ -106,11 +109,12 @@ namespace WizBotLibrary.Modules
     WizBot CurrentBot;
     IEnumerable<IRecursiveCommand> Commands;
 
-    public RecursiveCommands(WizBot Bot) {
+    public RecursiveCommands(WizBot Bot)
+    {
       this.CurrentBot = Bot;
     }
 
-    
+
     //  Register commands
     public async Task RegisterCommands()
     {
@@ -123,11 +127,41 @@ namespace WizBotLibrary.Modules
     IEnumerable<IRecursiveCommand> RegisterCommandsFromFiles()
     {
       IEnumerable<IRecursiveCommand> Commands = from t in Assembly.GetExecutingAssembly().GetTypes()
-        where t.GetInterfaces().Contains(typeof(IRecursiveCommand))
-        && t.GetConstructor(Type.EmptyTypes) != null
-        select Activator.CreateInstance(t) as IRecursiveCommand;
+                                                where t.GetInterfaces().Contains(typeof(IRecursiveCommand))
+                                                && t.GetConstructor(Type.EmptyTypes) != null
+                                                select Activator.CreateInstance(t) as IRecursiveCommand;
 
       return Commands;
+    }
+  }
+  public class TextCommands
+  {
+    WizBot Bot;
+    IEnumerable<ITextCommand> Commands;
+
+    public TextCommands(WizBot Bot)
+    {
+      this.Bot = Bot;
+    }
+
+    public void RegisterCommands()
+    {
+      Commands = RegisterCommandsFromFiles();
+    }
+
+    IEnumerable<ITextCommand> RegisterCommandsFromFiles()
+    {
+      IEnumerable<ITextCommand> Commands = from t in Assembly.GetExecutingAssembly().GetTypes()
+                                            where t.GetInterfaces().Contains(typeof(ITextCommand))
+                                            && t.GetConstructor(Type.EmptyTypes) != null
+                                            select Activator.CreateInstance(t) as ITextCommand;
+
+      return Commands;
+    }
+    public async Task ConsumeCommand(SocketMessage message) {
+      foreach (ITextCommand command in Commands) {
+        await command.Execute(message, Bot);
+      }
     }
   }
 }

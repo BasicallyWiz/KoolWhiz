@@ -32,10 +32,15 @@ namespace WizBotLibrary
 #endif
 
       logger = new Logger();
-      client = new DiscordSocketClient();
+      DiscordSocketConfig socketConfig = new DiscordSocketConfig { GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent };
+
+      client = new DiscordSocketClient(socketConfig);
       commandSystem = new CommandSystem(this);
 
+      
+
       client.SlashCommandExecuted += commandSystem.SlashSystem.ConsumeCommand;
+      client.MessageReceived += commandSystem.TextSystem.ConsumeCommand;
       client.Log += logger.Debug;
     }
 
@@ -66,7 +71,9 @@ namespace WizBotLibrary
     {
       //  This sucks, fix it later
       commandSystem.SlashSystem.RegisterCommands();
+      commandSystem.TextSystem.RegisterCommands();
       await commandSystem.RecursiveSystem.RegisterCommands();
+      await logger.Info($"Working directory is: {Directory.GetCurrentDirectory()}");
     }
   }
 }

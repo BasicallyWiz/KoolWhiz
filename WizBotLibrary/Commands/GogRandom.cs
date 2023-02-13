@@ -39,8 +39,8 @@ namespace WizBotLibrary.Modules
       embedBuilder.Footer.Text = $"Loading gogs may take some time...";
 
       WebClient client = new WebClient();
-      
 
+      await Bot.logger.Info($"gograndom came out: {gog}");
       await inputCommand.RespondAsync(embed: embedBuilder.Build());
     }
   }

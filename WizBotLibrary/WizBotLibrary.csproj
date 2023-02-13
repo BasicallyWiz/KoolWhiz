@@ -105,9 +105,11 @@
     <Compile Include="Commands\ArchiveGogs.cs" />
     <Compile Include="Commands\FiveSeconds.cs" />
     <Compile Include="Commands\GogRandom.cs" />
+    <Compile Include="Commands\GogSerious.cs" />
     <Compile Include="Commands\Structs\ICommand.cs" />
     <Compile Include="Commands\Structs\IRecursiveCommand.cs" />
     <Compile Include="Commands\Structs\ISlashCommand.cs" />
+    <Compile Include="Commands\Structs\ITextCommand.cs" />
     <Compile Include="Modules\Commands.cs" />
     <Compile Include="Modules\DiscordInteraction\DiscordInteraction.cs" />
     <Compile Include="Modules\DiscordNetExtensions\SocketUser.cs" />
