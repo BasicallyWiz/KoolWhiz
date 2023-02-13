@@ -12,12 +12,15 @@ namespace WizBotLibrary.Commands
   {
     public int RecursiveType => throw new NotImplementedException();
 
+    public string InGroup { get { return ""; } }
     public string Name
     {
       get { return "five_seconds"; }
     }
 
     public string Description => throw new NotImplementedException();
+
+    
 
     public async Task Execute()
     {

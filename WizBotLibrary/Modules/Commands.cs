@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Discord;
+using Discord.Commands.Builders;
 using Discord.WebSocket;
 
 using WizBotLibrary.Commands.Structs;
@@ -34,9 +35,16 @@ namespace WizBotLibrary.Modules
     //  Register commands
     public void RegisterCommands()
     {
+      
+
       Commands = RegisterCommandsFromFiles();
       RegisterCommandsToDiscord();
     }
+
+    /// <summary>
+    /// Method using reflection to collect all commands, in this case: all classes that inherit <see cref="ISlashCommand"/>
+    /// </summary>
+    /// <returns>an <see cref="IEnumerable<ISlashCommand>"/> containing all commands collected.</returns>
     IEnumerable<ISlashCommand> RegisterCommandsFromFiles()
     {
       IEnumerable<ISlashCommand> Commands = from t in Assembly.GetExecutingAssembly().GetTypes()
@@ -52,29 +60,37 @@ namespace WizBotLibrary.Modules
       {
         foreach (ISlashCommand command in Commands)
         {
+          //TODO: Add support for command groups and subcommands
           var guild = CurrentBot.client.Rest.GetGuildAsync(603162720199639061).Result;
 
-          var Slash = new SlashCommandBuilder();
-
-          if (command.Name.Any(char.IsUpper)) { CurrentBot.logger.Warn($"The command \"{command.Name}\" includes illegal characters.\nThe most likely issue, is that it contains uppercase characters.\nIn attempt to alleviate the issue, ToLower() will be applied.\nFor more details, see: https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-naming").Wait(); }
-          Slash.Name = command.Name.ToLower();
-          Slash.Description = command.Description;
-
-          guild.CreateApplicationCommandAsync(Slash.Build());
+          guild.CreateApplicationCommandAsync(command.Builder.Build());
         }
       }
       else
       {
-        throw new NotImplementedException("Slash Command setup has not been implemented for release mode!");
+        foreach (ISlashCommand command in Commands)
+        {
+          //TODO: Add support for command groups and subcommands
+          var guild = CurrentBot.client.Rest.GetGuildAsync(603162720199639061).Result;
+
+          var Slash = new SlashCommandBuilder();
+
+          CurrentBot.client.CreateGlobalApplicationCommandAsync(command.Builder.Build());
+        }
       }
     }
 
-    //  Handle commands
+    /// <summary>
+    /// Event fired to consume a slash command.
+    /// </summary>
+    /// <param name="inputCommand">The slash command from a user that fired this command</param>
+    /// <returns>Nothing; it's async.</returns>
     public async Task ConsumeCommand(SocketSlashCommand inputCommand)
     {
-      foreach (ISlashCommand commandToExcecute in Commands.Where(command => command.Name == inputCommand.Data.Name))
+      foreach (ISlashCommand commandToExcecute in Commands.Where(command => command.Builder.Name == inputCommand.Data.Name))
       {
-        await commandToExcecute.Execute(inputCommand);
+        await CurrentBot.logger.Debug($"Command excecuted: {commandToExcecute.Builder.Name}");
+        await commandToExcecute.Execute(inputCommand, CurrentBot);
       }
     }
   }
@@ -98,9 +114,9 @@ namespace WizBotLibrary.Modules
     {
       Commands = RegisterCommandsFromFiles();
 
-      foreach (IRecursiveCommand command in Commands) {
-        await CurrentBot.logger.Debug(command.Name);
-      }
+      //foreach (IRecursiveCommand command in Commands) {
+      //  await CurrentBot.logger.Debug(command);
+      //}
     }
     IEnumerable<IRecursiveCommand> RegisterCommandsFromFiles()
     {

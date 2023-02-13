@@ -18,8 +18,13 @@ namespace WizBotLibrary.Modules
     //  Events
     public event Log OnDebug;
     public event Log OnWarning;
+    public event Log OnInfo;
 
     //  Methods
+    public async Task Info(string LogText)
+    {
+      OnInfo?.Invoke(LogText);
+    }
     public async Task Debug(string LogText)
     {
       OnDebug?.Invoke(LogText);

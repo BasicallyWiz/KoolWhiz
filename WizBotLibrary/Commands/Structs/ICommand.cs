@@ -1,4 +1,5 @@
-﻿using Discord.WebSocket;
+﻿using Discord.Commands.Builders;
+using Discord.WebSocket;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +10,6 @@ namespace WizBotLibrary.Commands.Structs
 {
   public interface ICommand
   {
-    string Name { get; }
-    string Description { get; }
-
     
   }
 }
