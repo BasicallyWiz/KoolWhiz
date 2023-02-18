@@ -28,7 +28,7 @@ namespace WizBotLibrary.Commands
     {
       EmbedBuilder embed = new EmbedBuilder();
       embed.Title = "Bot info. Very nice.";
-
+      embed.ImageUrl = $"https://opengraph.githubassets.com/{new Random().Next()}/BasicallyWiz/KoolWhiz";
 
       EmbedFieldBuilder clientField = new EmbedFieldBuilder();
       clientField.Name = "Discord Client";
