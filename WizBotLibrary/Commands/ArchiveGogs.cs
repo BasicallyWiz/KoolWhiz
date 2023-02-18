@@ -23,6 +23,7 @@ namespace WizBotLibrary.Commands
         SlashCommandBuilder builder = new SlashCommandBuilder();
         builder.Name = nameof(ArchiveGogs).ToLower();
         builder.Description = "Collects gogs and archives them.";
+        builder.IsDMEnabled = true;
 
         return builder;
       }
@@ -54,8 +55,13 @@ namespace WizBotLibrary.Commands
         return Task.CompletedTask;
       });
 
-      File.WriteAllLines($"{Directory.GetCurrentDirectory()}\\gogs\\gogs.txt", UrlList.ToArray());
-      await inputCommand.FollowupAsync("Finished caching urls");
+      if (!Directory.Exists($"{Directory.GetCurrentDirectory()}/gogs/")) {
+        Directory.CreateDirectory($"{Directory.GetCurrentDirectory()}/gogs/");
+      }
+
+      File.WriteAllLines($"{Directory.GetCurrentDirectory()}/gogs/gogs.txt", UrlList.ToArray());
+      await Bot.logger.Info($"Archived gogs to: {Directory.GetCurrentDirectory()}/gogs/");
+      await inputCommand.FollowupAsync("Finished caching urls, but we couldn't download any files.");
     }
   }
 }

@@ -21,6 +21,7 @@ namespace WizBotLibrary
     public Logger logger; //  Implementation for text log output
     public Input input; //  Implementation for input
     public CommandSystem commandSystem;
+    public Statistics botStats;
 
     //  My Parameters
     public readonly bool IsDebugMode = false;
@@ -36,12 +37,13 @@ namespace WizBotLibrary
 
       client = new DiscordSocketClient(socketConfig);
       commandSystem = new CommandSystem(this);
-
-      
+      botStats = new Statistics();
 
       client.SlashCommandExecuted += commandSystem.SlashSystem.ConsumeCommand;
       client.MessageReceived += commandSystem.TextSystem.ConsumeCommand;
-      client.Log += logger.Debug;
+      client.Log += logger.Info;
+
+      botStats.creationDateTime = DateTime.UtcNow;
     }
 
     public async Task MainAsync()

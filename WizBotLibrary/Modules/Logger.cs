@@ -25,6 +25,10 @@ namespace WizBotLibrary.Modules
     {
       OnInfo?.Invoke(LogText);
     }
+    public async Task Info(LogMessage msg)
+    {
+      OnInfo?.Invoke(msg.ToString());
+    }
     public async Task Debug(string LogText)
     {
       OnDebug?.Invoke(LogText);

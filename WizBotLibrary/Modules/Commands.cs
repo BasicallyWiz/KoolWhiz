@@ -95,6 +95,7 @@ namespace WizBotLibrary.Modules
       {
         await CurrentBot.logger.Debug($"Command excecuted: {commandToExcecute.Builder.Name}");
         await commandToExcecute.Execute(inputCommand, CurrentBot);
+        CurrentBot.botStats.slashCommandsUsed++;
       }
     }
   }
