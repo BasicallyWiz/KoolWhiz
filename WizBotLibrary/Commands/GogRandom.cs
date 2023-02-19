@@ -27,8 +27,8 @@ namespace WizBotLibrary.Modules
 
     public async Task Execute(SocketSlashCommand inputCommand, WizBot Bot)
     {
-      if (!File.Exists($"{Directory.GetCurrentDirectory()}/gogs/gogs.txt")) { await inputCommand.RespondAsync("Looks like we have no gogs cached. A developer needs to do /archivegogs to cache the gogs."); return; }
-      IEnumerable<string> Strings = File.ReadAllLines($"{Directory.GetCurrentDirectory()}/gogs/gogs.txt");
+      if (!File.Exists($"{Directory.GetCurrentDirectory()}{OSTools.DirSep}gogs{OSTools.DirSep}gogs.txt")) { await inputCommand.RespondAsync("Looks like we have no gogs cached. A developer needs to do /archivegogs to cache the gogs."); return; }
+      IEnumerable<string> Strings = File.ReadAllLines($"{Directory.GetCurrentDirectory()}{OSTools.DirSep}gogs{OSTools.DirSep}gogs.txt");
       
       Random random = new Random();
       int gog = random.Next(Strings.Count());

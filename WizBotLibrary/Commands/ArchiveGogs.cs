@@ -44,23 +44,33 @@ namespace WizBotLibrary.Commands
 
       if (SourceChannel == null) { await inputCommand.FollowupAsync("We can't reach the channel that's meant to be archived."); return; }
       List<string> UrlList = new List<string>();
-      
+
       //  Executes regardless of debug or release
       var messagesEnumerable = SourceChannel.GetMessagesAsync(1000, CacheMode.AllowDownload).Flatten();
       await messagesEnumerable.ForEachAwaitAsync((IMessage message) =>
       {
-        foreach (IAttachment attachment in message.Attachments) {
-          UrlList.Add(attachment.Url);
+        if (message.Attachments.Count > 0) 
+        {
+          foreach (IAttachment attachment in message.Attachments) 
+          {
+            UrlList.Add(attachment.Url);
+          }
         }
+        else
+        {
+          UrlList.Add(message.Content);
+        }
+        
         return Task.CompletedTask;
       });
 
-      if (!Directory.Exists($"{Directory.GetCurrentDirectory()}/gogs/")) {
-        Directory.CreateDirectory($"{Directory.GetCurrentDirectory()}/gogs/");
+      if (!Directory.Exists($"{Directory.GetCurrentDirectory()}{OSTools.DirSep}gogs{OSTools.DirSep}"))
+      {
+        Directory.CreateDirectory($"{Directory.GetCurrentDirectory()}{OSTools.DirSep}gogs{OSTools.DirSep}");
       }
 
-      File.WriteAllLines($"{Directory.GetCurrentDirectory()}/gogs/gogs.txt", UrlList.ToArray());
-      await Bot.logger.Info($"Archived gogs to: {Directory.GetCurrentDirectory()}/gogs/");
+      File.WriteAllLines($"{Directory.GetCurrentDirectory()}{OSTools.DirSep}gogs{OSTools.DirSep}gogs.txt", UrlList.ToArray().Reverse());
+      await Bot.logger.Info($"Archived gogs to: {Directory.GetCurrentDirectory()}{OSTools.DirSep}gogs{OSTools.DirSep}");
       await inputCommand.FollowupAsync("Finished caching urls, but we couldn't download any files.");
     }
   }

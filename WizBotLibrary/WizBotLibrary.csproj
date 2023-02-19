@@ -113,9 +113,9 @@
     <Compile Include="Commands\Interfaces\ISlashCommand.cs" />
     <Compile Include="Commands\Interfaces\ITextCommand.cs" />
     <Compile Include="Modules\Commands.cs" />
-    <Compile Include="Modules\DiscordInteraction\DiscordInteraction.cs" />
     <Compile Include="Modules\DiscordNetExtensions\SocketUser.cs" />
     <Compile Include="Modules\Input.cs" />
+    <Compile Include="Modules\OSTools.cs" />
     <Compile Include="Modules\Statistics.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Modules\Logger.cs" />
@@ -128,8 +128,6 @@
   <ItemGroup>
     <None Include="Commands\ideas.md" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Modules\BloonsDB\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
