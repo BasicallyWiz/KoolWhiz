@@ -43,7 +43,7 @@ namespace WizBotLibrary.Modules
       }
       embedBuilder.Color = Color.DarkPurple;
       embedBuilder.Footer = new EmbedFooterBuilder();
-      embedBuilder.Footer.Text = $"Loading gogs may take some time...";
+      if (videoUrl == "") embedBuilder.Footer.Text = "Loading gogs may take some time..."; else embedBuilder.Footer.Text = "This gog url didn't end with \".gif\", so the alternate view will be used.";
 
       if (Bot.IsDebugMode) {
         EmbedFieldBuilder debugField = new EmbedFieldBuilder();
