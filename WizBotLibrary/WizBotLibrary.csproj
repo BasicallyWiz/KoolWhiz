@@ -104,7 +104,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\ArchiveGogs.cs" />
-    <Compile Include="Commands\BotInfo.cs" />
+    <Compile Include="Commands\Dev.cs" />
+    <Compile Include="Commands\Info.cs" />
     <Compile Include="Commands\FiveSeconds.cs" />
     <Compile Include="Commands\GogRandom.cs" />
     <Compile Include="Commands\GogSerious.cs" />

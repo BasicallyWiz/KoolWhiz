@@ -13,7 +13,7 @@ namespace WizBotLibrary.Commands
   {
     public string Name { get { return "gogserious"; } }
 
-    public string Description { get { return ""; } }
+    public string Description { get { return "<:gogSerious:831917700850384896>"; } }
 
     public async Task Execute(SocketMessage message, WizBot Bot)
     {

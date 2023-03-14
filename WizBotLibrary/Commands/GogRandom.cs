@@ -34,15 +34,29 @@ namespace WizBotLibrary.Modules
       int gog = random.Next(Strings.Count());
       EmbedBuilder embedBuilder = new EmbedBuilder();
       embedBuilder.Title = "Here's a random gog!";
-      embedBuilder.ImageUrl = Strings.ElementAt(gog);
+      string videoUrl = "";
+      if (Strings.ElementAt(gog).EndsWith(".gif") || Strings.ElementAt(gog).EndsWith(".png")) {
+        embedBuilder.ImageUrl = Strings.ElementAt(gog);
+      }
+      else { 
+        videoUrl = Strings.ElementAt(gog);
+      }
       embedBuilder.Color = Color.DarkPurple;
       embedBuilder.Footer = new EmbedFooterBuilder();
       embedBuilder.Footer.Text = $"Loading gogs may take some time...";
 
-      WebClient client = new WebClient();
+      if (Bot.IsDebugMode) {
+        EmbedFieldBuilder debugField = new EmbedFieldBuilder();
+        debugField.Name = "Debug";
+        debugField.Value = $"gog num: {gog}\n" +
+        $"gog file: {Strings.ElementAt(gog)}";
+        embedBuilder.AddField(debugField);
+      }
 
-      await Bot.logger.Info($"gograndom came out: {gog}");
       await inputCommand.RespondAsync(embed: embedBuilder.Build());
+      if (videoUrl != "") {
+        await inputCommand.FollowupAsync(videoUrl);
+      }
     }
   }
 }

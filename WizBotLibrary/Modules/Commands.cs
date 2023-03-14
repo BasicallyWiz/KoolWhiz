@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands.Builders;
+using Discord.Rest;
 using Discord.WebSocket;
 
 using WizBotLibrary.Commands.Interfaces;
@@ -24,32 +25,26 @@ namespace WizBotLibrary.Modules
       TextSystem = new TextCommands(Bot);
     }
   }
-  public class SlashCommands
-  {
-    WizBot CurrentBot;
+
+  public class SlashCommands {
+    WizBot Bot;
     IEnumerable<ISlashCommand> Commands;
 
-    public SlashCommands(WizBot Bot)
-    {
-      CurrentBot = Bot;
+    public SlashCommands(WizBot Bot) {
+      this.Bot = Bot;
     }
 
-    //  Register commands
-    public void RegisterCommands()
-    {
-      CurrentBot.client.BulkOverwriteGlobalApplicationCommandsAsync(null);
-      CurrentBot.client.Rest.GetGuildAsync(603162720199639061).Result.BulkOverwriteApplicationCommandsAsync(null);
-
-      Commands = RegisterCommandsFromFiles();
-      RegisterCommandsToDiscord();
+    public async Task Register() {
+      Commands = GetCommandsFromFiles();
+      if (!Bot.IsDebugMode) {
+        await RegisterCommands(Commands);
+      }
+      else 
+      {
+        await RegisterDebugCommands(Commands);
+      }
     }
-
-    /// <summary>
-    /// Method using reflection to collect all commands, in this case: all classes that inherit <see cref="ISlashCommand"/>
-    /// </summary>
-    /// <returns>an <see cref="IEnumerable<ISlashCommand>"/> containing all commands collected.</returns>
-    IEnumerable<ISlashCommand> RegisterCommandsFromFiles()
-    {
+    IEnumerable<ISlashCommand> GetCommandsFromFiles() {
       IEnumerable<ISlashCommand> Commands = from t in Assembly.GetExecutingAssembly().GetTypes()
                                             where t.GetInterfaces().Contains(typeof(ISlashCommand))
                                             && t.GetConstructor(Type.EmptyTypes) != null
@@ -57,51 +52,36 @@ namespace WizBotLibrary.Modules
 
       return Commands;
     }
-    void RegisterCommandsToDiscord()
-    {
-      if (CurrentBot.IsDebugMode)
-      {
-        foreach (ISlashCommand command in Commands)
-        {
-          //TODO: Add support for command groups and subcommands
-          var guild = CurrentBot.client.Rest.GetGuildAsync(603162720199639061).Result;
-          command.Builder.Description += " (DEBUG)";
-          guild.CreateApplicationCommandAsync(command.Builder.Build());
-        }
+    async Task RegisterCommands(IEnumerable<ISlashCommand> Commands) {
+      List<ApplicationCommandProperties> AppCommands = new List<ApplicationCommandProperties>();
+
+      foreach (ISlashCommand Command in Commands) {
+        AppCommands.Add(Command.Builder.Build());
       }
-      else
-      {
-        foreach (ISlashCommand command in Commands)
-        {
-          //TODO: Add support for command groups and subcommands
-          var guild = CurrentBot.client.Rest.GetGuildAsync(603162720199639061).Result;
 
-          var Slash = new SlashCommandBuilder();
-
-
-          CurrentBot.client.CreateGlobalApplicationCommandAsync(command.Builder.Build());
-        }
-      }
+      await Bot.client.BulkOverwriteGlobalApplicationCommandsAsync(AppCommands.ToArray());
     }
 
-    /// <summary>
-    /// Event fired to consume a slash command.
-    /// </summary>
-    /// <param name="inputCommand">The slash command from a user that fired this command</param>
-    /// <returns>Nothing; it's async.</returns>
-    public async Task ConsumeCommand(SocketSlashCommand inputCommand)
-    {
-      foreach (ISlashCommand commandToExcecute in Commands.Where(command => command.Builder.Name == inputCommand.Data.Name))
+    async Task RegisterDebugCommands(IEnumerable<ISlashCommand> Commands) {
+      List<ApplicationCommandProperties> AppCommands = new List<ApplicationCommandProperties>();
+
+      foreach (ISlashCommand Command in Commands) {
+        AppCommands.Add(Command.Builder.Build());
+      }
+
+      await Bot.client.GetGuild(603162720199639061).BulkOverwriteApplicationCommandAsync(AppCommands.ToArray());
+    }
+    public async Task ConsumeCommand(SocketSlashCommand Slash) {
+      foreach (ISlashCommand Command in Commands) 
       {
-        await CurrentBot.logger.Debug($"Command excecuted: {commandToExcecute.Builder.Name}");
-        await commandToExcecute.Execute(inputCommand, CurrentBot);
-        CurrentBot.botStats.slashCommandsUsed++;
+        if (Slash.Data.Name == Command.Builder.Name) 
+        {
+          await Command.Execute(Slash, Bot);
+        }
       }
     }
   }
-
-  //  Not executed by a user, but by a specific point in time.
-  public class RecursiveCommands
+  public class RecursiveCommands //Not executed by a user, but by a specific point in time.
   {
     /// X Find recurcive commands
     /// Start command ticking, and subscribe to events
@@ -134,6 +114,8 @@ namespace WizBotLibrary.Modules
 
       return Commands;
     }
+    
+
   }
   public class TextCommands
   {

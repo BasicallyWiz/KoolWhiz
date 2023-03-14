@@ -9,14 +9,14 @@ using WizBotLibrary.Commands.Interfaces;
 
 namespace WizBotLibrary.Commands
 {
-  internal class BotInfo : ISlashCommand
+  internal class Info : ISlashCommand
   {
     public SlashCommandBuilder Builder
     {
       get
       {
         SlashCommandBuilder builder = new SlashCommandBuilder();
-        builder.Name = nameof(BotInfo).ToLower();
+        builder.Name = nameof(Info).ToLower();
         builder.Description = "Gets some info about the bot.";
         builder.IsDMEnabled = true;
 
@@ -32,7 +32,7 @@ namespace WizBotLibrary.Commands
 
       EmbedFieldBuilder clientField = new EmbedFieldBuilder();
       clientField.Name = "Discord Client";
-      clientField.Value = $"DMs open: {Bot.client.DMChannels.Count}\n" +
+      clientField.Value = //$"DMs open: {Bot.client.GetDMChannelsAsync().Result.Count()}\n" +
       $"Servers: {Bot.client.Guilds.Count}\n" +
       $"SlashCommands used this session: {Bot.botStats.slashCommandsUsed}";
       embed.AddField(clientField);

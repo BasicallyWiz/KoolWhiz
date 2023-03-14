@@ -26,11 +26,16 @@ namespace WizBotLibrary
     //  My Parameters
     public readonly bool IsDebugMode = false;
 
-    public WizBot()
+    public WizBot(string[] args)
     {
 #if DEBUG
       IsDebugMode = true;
 #endif
+
+      foreach (string arg in args)
+      {
+        if (arg == "--debug") { IsDebugMode = true; logger.Info("Debug argument found!"); }
+      }
 
       logger = new Logger();
       DiscordSocketConfig socketConfig = new DiscordSocketConfig { GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent };
@@ -46,11 +51,15 @@ namespace WizBotLibrary
       botStats.creationDateTime = DateTime.UtcNow;
     }
 
-    public async Task MainAsync()
+    public async Task MainAsync(string[] args)
     {
+      
+
       try
       {
-        await logger.Debug("Getting shit going...");
+        string DebugAppend = "";
+        if (IsDebugMode) { DebugAppend = "in debug mode!"; }
+        await logger.Info($"Getting the bot running... {DebugAppend}");
 
         //  Register required client events
         client.Ready += DiscordClientReady;
@@ -72,7 +81,7 @@ namespace WizBotLibrary
     public async Task DiscordClientReady()
     {
       //  This sucks, fix it later
-      commandSystem.SlashSystem.RegisterCommands();
+      await commandSystem.SlashSystem.Register();
       commandSystem.TextSystem.RegisterCommands();
       await commandSystem.RecursiveSystem.RegisterCommands();
       await logger.Info($"Working directory is: {Directory.GetCurrentDirectory()}");
