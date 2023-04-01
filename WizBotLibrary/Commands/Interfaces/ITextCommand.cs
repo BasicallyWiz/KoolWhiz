@@ -12,6 +12,7 @@ namespace WizBotLibrary.Commands.Interfaces
   {
     string Name { get; }
     string Description { get; }
+    Task Setup(WizBot Bot);
     Task Execute(SocketMessage message, WizBot Bot);
   }
 }

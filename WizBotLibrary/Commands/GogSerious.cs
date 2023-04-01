@@ -15,6 +15,11 @@ namespace WizBotLibrary.Commands
 
     public string Description { get { return "<:gogSerious:831917700850384896>"; } }
 
+    public async Task Setup(WizBot Bot)
+    {
+      return;
+    }
+
     public async Task Execute(SocketMessage message, WizBot Bot)
     {
       if (message.Channel.Id != 831973302972055615) return;

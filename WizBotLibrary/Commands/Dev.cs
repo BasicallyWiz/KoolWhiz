@@ -29,6 +29,7 @@ namespace WizBotLibrary.Commands {
     }
 
     public async Task Execute(SocketSlashCommand inputCommand, WizBot Bot) {
+      if(!inputCommand.User.IsDeveloper(Bot)) await inputCommand.RespondAsync("You're not a dev. You can't use this commands.", ephemeral: true);
       await Bot.logger.Debug(inputCommand.Data.ToStringFormatted());
 
       switch (inputCommand.Data.Options.ElementAt(0).Name) {

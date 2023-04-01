@@ -25,7 +25,6 @@ namespace WizBotLibrary.Modules
       TextSystem = new TextCommands(Bot);
     }
   }
-
   public class SlashCommands {
     WizBot Bot;
     IEnumerable<ISlashCommand> Commands;
@@ -72,6 +71,8 @@ namespace WizBotLibrary.Modules
       await Bot.client.GetGuild(603162720199639061).BulkOverwriteApplicationCommandAsync(AppCommands.ToArray());
     }
     public async Task ConsumeCommand(SocketSlashCommand Slash) {
+      Bot.botStats.slashCommandsUsed++;
+
       foreach (ISlashCommand Command in Commands) 
       {
         if (Slash.Data.Name == Command.Builder.Name) 
@@ -130,6 +131,10 @@ namespace WizBotLibrary.Modules
     public void RegisterCommands()
     {
       Commands = RegisterCommandsFromFiles();
+      foreach (ITextCommand command in Commands) 
+      {
+        command.Setup(Bot);
+      }
     }
 
     IEnumerable<ITextCommand> RegisterCommandsFromFiles()
