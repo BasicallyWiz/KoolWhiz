@@ -9,6 +9,7 @@ namespace WizBotLibrary.Modules
   public class Statistics
   {
     public DateTime creationDateTime;
-    public int slashCommandsUsed;
+    public int slashCommandsUsed = 0;
+    public int gogsCounted = 0;
   }
 }

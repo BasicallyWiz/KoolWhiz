@@ -34,7 +34,8 @@ namespace WizBotLibrary.Commands
       clientField.Name = "Discord Client";
       clientField.Value = //$"DMs open: {Bot.client.GetDMChannelsAsync().Result.Count()}\n" +
       $"Servers: {Bot.client.Guilds.Count}\n" +
-      $"SlashCommands used this session: {Bot.botStats.slashCommandsUsed}";
+      $"SlashCommands used this session: {Bot.botStats.slashCommandsUsed}\n" +
+      $"Gogs counted this session: {Bot.botStats.gogsCounted}";
       embed.AddField(clientField);
 
 

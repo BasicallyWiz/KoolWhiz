@@ -33,31 +33,36 @@ namespace WizBotLibrary.Commands
         return Task.CompletedTask;
       });
 
+      string[] messageStuff = message.Content.Split(' ');
+      if (messageStuff[0] != "gog") { await message.DeleteAsync(); return; }
+      
       ulong oldnum = 0;
       ulong newnum = 0;
       int i = 0;
-
-      foreach (IMessage msg in messages) {
-        switch (i)
+      try
+      {
+        foreach (IMessage msg in messages)
         {
-          case 0:
-            newnum = ulong.Parse(msg.Content.Split(' ')[1]);
-            i++;
-            break;
+          switch (i)
+          {
+            case 0:
+              newnum = ulong.Parse(msg.Content.Split(' ')[1]);
+              i++;
+              break;
 
-          case 1:
-            oldnum = ulong.Parse(msg.Content.Split(' ')[1]);
-            break;
+            case 1:
+              oldnum = ulong.Parse(msg.Content.Split(' ')[1]);
+              break;
+          }
         }
+        if (newnum != oldnum + 1) { await message.DeleteAsync(); return; }
       }
-
-      if (newnum != oldnum + 1) { await message.DeleteAsync(); return; }
-      string[] messageStuff = message.Content.Split(' ');
-      if (messageStuff[0] != "gog") { await message.DeleteAsync(); return; }
+      catch(Exception ex) { return; }
 
       Emote reactEmote;
       if (!Emote.TryParse("<:gogHappy:831979949036273715>", out reactEmote)) return;
       await message.AddReactionAsync(reactEmote);
+      Bot.botStats.gogsCounted++;
     }
   }
 }
