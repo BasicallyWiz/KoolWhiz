@@ -37,7 +37,9 @@ namespace WizBotLibrary.Commands
       if (messageStuff[0] != "gog") { await message.DeleteAsync(); return; }
       
       ulong oldnum = 0;
+      IUser oldUser = null;
       ulong newnum = 0;
+      IUser newUser = null;
       int i = 0;
       try
       {
@@ -47,15 +49,17 @@ namespace WizBotLibrary.Commands
           {
             case 0:
               newnum = ulong.Parse(msg.Content.Split(' ')[1]);
+              newUser = msg.Author;
               i++;
               break;
 
             case 1:
               oldnum = ulong.Parse(msg.Content.Split(' ')[1]);
+              oldUser= msg.Author;
               break;
           }
         }
-        if (newnum != oldnum + 1) { await message.DeleteAsync(); return; }
+        if (newnum != oldnum + 1 || oldUser == newUser) { await message.DeleteAsync(); return; }
       }
       catch(Exception ex) { return; }
 

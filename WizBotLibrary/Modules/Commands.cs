@@ -27,7 +27,7 @@ namespace WizBotLibrary.Modules
   }
   public class SlashCommands {
     WizBot Bot;
-    IEnumerable<ISlashCommand> Commands;
+    public IEnumerable<ISlashCommand> Commands;
 
     public SlashCommands(WizBot Bot) {
       this.Bot = Bot;
@@ -121,7 +121,7 @@ namespace WizBotLibrary.Modules
   public class TextCommands
   {
     WizBot Bot;
-    IEnumerable<ITextCommand> Commands;
+    public IEnumerable<ITextCommand> Commands;
 
     public TextCommands(WizBot Bot)
     {
