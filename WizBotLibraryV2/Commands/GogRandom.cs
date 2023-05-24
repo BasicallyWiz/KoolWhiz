@@ -24,7 +24,10 @@ namespace WizBotLibrary.Modules
         return command;
       }
     }
-
+    public async Task Setup(WizBot Bot)
+    {
+      return;
+    }
     public async Task Execute(SocketSlashCommand inputCommand, WizBot Bot)
     {
       if (!File.Exists($"{Directory.GetCurrentDirectory()}{OSTools.DirSep}gogs{OSTools.DirSep}gogs.txt")) { await inputCommand.RespondAsync("Looks like we have no gogs cached. A developer needs to do /archivegogs to cache the gogs."); return; }

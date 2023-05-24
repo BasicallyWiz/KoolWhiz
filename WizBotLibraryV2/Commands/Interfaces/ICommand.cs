@@ -10,6 +10,6 @@ namespace WizBotLibrary.Commands.Interfaces
 {
   public interface ICommand
   {
-    
+    Task Setup(WizBot Bot);
   }
 }

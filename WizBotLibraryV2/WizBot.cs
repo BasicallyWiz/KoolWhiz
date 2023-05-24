@@ -5,7 +5,6 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using Discord;
 using Discord.WebSocket;
 
@@ -34,7 +33,7 @@ namespace WizBotLibrary
 
       foreach (string arg in args)
       {
-        if (arg == "--debug") { IsDebugMode = true; logger.Info("Debug argument found!"); }
+        if (arg == "--debug") { IsDebugMode = true; logger?.Setup("Debug argument found!"); }
       }
 
       logger = new Logger();
@@ -46,26 +45,24 @@ namespace WizBotLibrary
 
       client.SlashCommandExecuted += commandSystem.SlashSystem.ConsumeCommand;
       client.MessageReceived += commandSystem.TextSystem.ConsumeCommand;
-      client.Log += logger.Info;
+      client.Log += logger.Setup;
 
       botStats.creationDateTime = DateTime.UtcNow;
     }
 
     public async Task MainAsync(string[] args)
     {
-      
-
       try
       {
         string DebugAppend = "";
         if (IsDebugMode) { DebugAppend = "in debug mode!"; }
-        await logger.Info($"Getting the bot running... {DebugAppend}");
+        await logger.Setup($"Getting the bot running... {DebugAppend}");
 
         //  Register required client events
         client.Ready += DiscordClientReady;
 
         await client.LoginAsync(TokenType.Bot, File.ReadAllText("token.txt"));
-        
+
         await client.StartAsync();
 
       } catch(Exception ex) {
@@ -81,10 +78,14 @@ namespace WizBotLibrary
     public async Task DiscordClientReady()
     {
       //  This sucks, fix it later
-      await commandSystem.SlashSystem.Register();
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+      commandSystem.SlashSystem.Register();
       commandSystem.TextSystem.RegisterCommands();
-      await commandSystem.RecursiveSystem.RegisterCommands();
+      commandSystem.RecursiveSystem.RegisterCommands();
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
       await logger.Info($"Working directory is: {Directory.GetCurrentDirectory()}");
+      client.Log -= logger.Setup;
+      client.Log += logger.Info;
     }
   }
 }

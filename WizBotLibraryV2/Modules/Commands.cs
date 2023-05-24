@@ -42,6 +42,11 @@ namespace WizBotLibrary.Modules
       {
         await RegisterDebugCommands(Commands);
       }
+
+      foreach (ISlashCommand command in Commands) 
+      {
+        command.Setup(Bot);
+      }
     }
     IEnumerable<ISlashCommand> GetCommandsFromFiles() {
       IEnumerable<ISlashCommand> Commands = from t in Assembly.GetExecutingAssembly().GetTypes()
@@ -80,6 +85,7 @@ namespace WizBotLibrary.Modules
           await Command.Execute(Slash, Bot);
         }
       }
+      return;
     }
   }
   public class RecursiveCommands //Not executed by a user, but by a specific point in time.

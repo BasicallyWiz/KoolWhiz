@@ -21,7 +21,10 @@ namespace WizBotLibrary.Commands
     public string Description => throw new NotImplementedException();
 
     
-
+    public async Task Setup(WizBot Bot)
+    {
+      return;
+    }
     public async Task Execute()
     {
       Console.WriteLine("Big Booty bitches");

@@ -8,6 +8,7 @@ public class WizBotExecutable
     if (Bot.IsDebugMode) Bot.logger.OnDebug += OnDebug;
     Bot.logger.OnWarning += OnWarn;
     Bot.logger.OnInfo += OnInfo;
+    Bot.logger.OnSetup += OnSetup;
     Bot.MainAsync(args).Wait();
   }
   public static async Task OnInfo(string text)
@@ -22,5 +23,9 @@ public class WizBotExecutable
     Console.ForegroundColor = ConsoleColor.Yellow;
     Console.WriteLine(text);
     Console.ForegroundColor = ConsoleColor.White;
+  }
+  public static async Task OnSetup(string text)
+  {
+    Console.WriteLine(text);
   }
 }

@@ -23,7 +23,10 @@ namespace WizBotLibrary.Commands
         return builder;
       }
     }
-
+    public async Task Setup(WizBot Bot)
+    {
+      return;
+    }
     public async Task Execute(SocketSlashCommand inputCommand, WizBot Bot)
     {
       EmbedBuilder embed = new EmbedBuilder();
