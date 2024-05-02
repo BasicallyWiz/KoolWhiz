@@ -3,9 +3,6 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
-# Inportant discord stuff
-token.txt
-
 # User-specific files
 *.rsuser
 *.suo
@@ -366,3 +363,6 @@ MigrationBackup/
 FodyWeavers.xsd
 /Images
 /docs
+
+# Gogbot files
+BotInfo.xml
