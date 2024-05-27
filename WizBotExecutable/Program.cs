@@ -6,13 +6,26 @@ using System.Xml.Serialization;
 using WizBotLibraryV3.Modules;
 using Discord.WebSocket;
 using Discord;
+using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace WizBotExecutable
 {
-    public class Exe
+  public class Exe
   {
+    Logging logger = new Logging();
+
     public static void Main(string[] args)
     {
+      new Exe().ExeMain(args);
+    }
+
+    public void ExeMain(string[] args)
+    {
+      AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
+      Process.GetCurrentProcess().Exited += OnProcessExit;
+
+
       XmlSerializer xml = new(typeof(BotData));
       if (!File.Exists($"{Directory.GetCurrentDirectory()}/BotInfo.xml"))
       {
@@ -37,12 +50,26 @@ namespace WizBotExecutable
 #endif
       };
 
-      Bot.Logger.OnDebug += Logging.OnDebug;
-      Bot.Logger.OnWarning += Logging.OnWarn;
-      Bot.Logger.OnInfo += Logging.OnInfo;
-      Bot.Logger.OnSetup += Logging.OnSetup;
+      Bot.Logger.OnDebug += logger.OnDebug;
+      Bot.Logger.OnWarning += logger.OnWarn;
+      Bot.Logger.OnInfo += logger.OnInfo;
+      Bot.Logger.OnSetup += logger.OnSetup;
+
+      if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+      {
+        LinuxSetup.Setup();
+      }
 
       Bot.MainAsync().Wait();
+      logger.Close();
+      Environment.Exit(0);
+    }
+
+    public void OnProcessExit(object? sender, EventArgs? e)
+    {
+      Console.WriteLine("Exiting...");
+      logger.Close();
+      Environment.Exit(0);
     }
   }
 }

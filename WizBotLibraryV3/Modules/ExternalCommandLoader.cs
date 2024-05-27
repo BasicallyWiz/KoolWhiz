@@ -10,6 +10,8 @@ namespace WizBotLibraryV3.Modules
 {
   public class ExternalCommandLoader
   {
+    bool CommandsReady = false;
+
     WizBot Bot { get; init; }
     List<SlashCommand> SlashCommands { get; set; } = new();
     public List<ApplicationCommandProperties> AppCommands { get; set; } = new();
@@ -24,11 +26,22 @@ namespace WizBotLibraryV3.Modules
 
     private async Task HandleCommand(SocketSlashCommand cmd)
     {
-      _ = Bot.Logger.Debug($"Slash command executed: {cmd.Data.Name}");
-      await SlashCommands.Where(x => x.Command().Name.Value == cmd.Data.Name).First().Execute(cmd);
+      if (!CommandsReady) { _ = cmd.RespondAsync("Slash commands are currently being loaded...", ephemeral: true); }
+      try
+      {
+        _ = Bot.Logger.Debug($"Slash command executed: {cmd.Data.Name}");
+        await SlashCommands.Where(x => x.Command().Name.Value == cmd.Data.Name).First().Execute(cmd);
+      }
+      catch (Exception ex)
+      {
+        await Bot.Client.GetUser(Bot.StartupData.OwnerId).SendMessageAsync($"Something bad happened.\n`{ex.Message}`\n```{ex}```");
+        await cmd.RespondAsync($"Something broke. {Bot.Client.GetUser(Bot.StartupData.OwnerId).GlobalName} has been notified.", ephemeral: true);
+        Bot.Logger?.Error(ex.Message);
+      }
     }
     public void LoadCommands()
     {
+      CommandsReady = false;
       Bot.Logger?.Info("Flushing Commands...");
       SlashCommands.Clear();
       AppCommands.Clear();
@@ -37,9 +50,18 @@ namespace WizBotLibraryV3.Modules
       // Get all the C# files in the code folder
       string[] csFiles = Directory.GetFiles(codeFolderPath, "*.cs");
 
+      Bot.Logger?.Info("Adding Syntax Trees...");
+      List<SyntaxTree> syntaxTrees = new List<SyntaxTree>();
+      // Add the C# files to the compilation
+      foreach (var csFile in csFiles)
+      {
+        Bot.Logger?.Info($"  {csFile}");
+        syntaxTrees.Add(CSharpSyntaxTree.ParseText(File.ReadAllText(csFile)));
+      }
+
       Bot.Logger?.Info("Creating Compiler...");
       // Create a compilation object
-      var compilation = CSharpCompilation.Create("MyCompilation")
+      var compilation = CSharpCompilation.Create("MyCompilation", syntaxTrees)
           .WithOptions(new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary))
           .AddReferences(MetadataReference.CreateFromFile(Assembly.Load("System.Runtime").Location))
           .AddReferences(MetadataReference.CreateFromFile(Assembly.Load("System.Private.CoreLib").Location))
@@ -49,15 +71,6 @@ namespace WizBotLibraryV3.Modules
           .AddReferences(MetadataReference.CreateFromFile(Assembly.Load("Discord.Net.Core").Location))
           .AddReferences(MetadataReference.CreateFromFile(Assembly.Load("Discord.Net.WebSocket").Location))
           .AddReferences(MetadataReference.CreateFromFile(Assembly.Load("Discord.Net.Rest").Location));
-
-      Bot.Logger?.Info("Adding Syntax Trees...");
-      // Add the C# files to the compilation
-      foreach (var csFile in csFiles)
-      {
-        Bot.Logger?.Info($"  {csFile}");
-        var syntaxTree = CSharpSyntaxTree.ParseText(File.ReadAllText(csFile));
-        compilation = compilation.AddSyntaxTrees(syntaxTree);
-      }
 
       Bot.Logger?.Info("Emitting Assembly...");
       // Emit the compiled assembly
@@ -98,6 +111,7 @@ namespace WizBotLibraryV3.Modules
             AppCommands.Add(instance!.Command());
           }
           Bot.Logger?.Info($"Finished loading commands successfully, with {SlashCommands.Count()} new commands");
+          CommandsReady = true;
         }
       }
     }

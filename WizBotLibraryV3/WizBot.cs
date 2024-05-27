@@ -39,7 +39,8 @@ namespace WizBotLibraryV3
 
     public async Task MainAsync() {
       Client.LoginAsync(TokenType.Bot, StartupData.ClientToken).Wait();
-      await Client.StartAsync();
+
+      _= Client.StartAsync();
 
       await Task.Delay(-1);
     }
